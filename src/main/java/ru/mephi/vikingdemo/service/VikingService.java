@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import ru.mephi.vikingdemo.model.Viking;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.mephi.vikingdemo.repository.VikingStorage;
 
@@ -12,8 +11,7 @@ import ru.mephi.vikingdemo.repository.VikingStorage;
 public class VikingService {
     private final VikingFactory vikingFactory;
     private final VikingStorage vikingStorage;
-    
-    
+
     @Autowired
     public VikingService(
             VikingFactory vikingFactory,
@@ -22,7 +20,7 @@ public class VikingService {
         this.vikingFactory = vikingFactory;
         this.vikingStorage = vikingStorage;
     }
-    
+
     public List<Viking> findAll() {
         return vikingStorage.findAll();
     }
@@ -47,4 +45,12 @@ public class VikingService {
     public void deleteAll() {
         vikingStorage.deleteAll();
     }
+
+    public void generateAndSaveMassive(int count) {
+        java.util.stream.Stream.generate(vikingFactory::createRandomViking)
+                .limit(count)
+                .forEach(vikingStorage::save);
+    }
+
+
 }
