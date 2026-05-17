@@ -15,7 +15,7 @@ import java.util.List;
 @Tag(name = "Vikings", description = "Операции с викингами")
 public class VikingController {
     private final VikingService vikingService;
-    private VikingListener vikingListener;
+    private final VikingListener vikingListener;
 
     public VikingController(VikingService vikingService, VikingListener vikingListener) {
         this.vikingService = vikingService;
@@ -23,8 +23,7 @@ public class VikingController {
     }
 
     @PostMapping("/post")
-    @Operation(summary = "Создать викинга со случайными параметрами",
-            operationId = "post")
+    @Operation(summary = "Создать викинга со случайными параметрами", operationId = "post")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Викинг успешно создан")
     })
@@ -36,6 +35,12 @@ public class VikingController {
     @Operation(summary = "Добавить конкретного викинга")
     public Viking addViking(@RequestBody Viking viking) {
         return vikingService.save(viking);
+    }
+
+    @PostMapping("/massive")
+    @Operation(summary = "Массовая генерация викингов")
+    public void generateMassive(@RequestParam int count) {
+        vikingService.generateAndSaveMassive(count);
     }
 
     @PutMapping("/{id}")
@@ -52,27 +57,22 @@ public class VikingController {
     public void deleteViking(@PathVariable int id) {
         vikingService.deleteById(id);
     }
-    
+
     @GetMapping
-    @Operation(summary = "Получить список созданных викингов", 
-            operationId = "getAllVikings")
+    @Operation(summary = "Получить список созданных викингов", operationId = "getAllVikings")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Список успешно получен")
     })
     public List<Viking> getAllVikings() {
-        System.out.println("GET /api/vikings called");
         return vikingService.findAll();
     }
 
     @GetMapping("/test")
-    @Operation(summary = "Получить список тестовых викингов", 
-            operationId = "getTest")
+    @Operation(summary = "Получить список тестовых викингов", operationId = "getTest")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Список успешно получен")
     })
-
     public List<String> test() {
-        System.out.println("GET /api/vikings/test called");
         return List.of("Ragnar", "Bjorn");
     }
 }
