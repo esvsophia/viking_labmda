@@ -3,27 +3,23 @@ package ru.mephi.vikingdemo.gui;
 import ru.mephi.vikingdemo.model.BeardStyle;
 import ru.mephi.vikingdemo.model.HairColor;
 import ru.mephi.vikingdemo.model.Viking;
+import ru.mephi.vikingdemo.service.VikingLambdaService;
 import ru.mephi.vikingdemo.service.VikingService;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class VikingDesktopFrame extends JFrame {
 
     private final VikingService vikingService;
+    private final VikingLambdaService lambdaService;
     private final VikingTableModel tableModel = new VikingTableModel();
 
-    public VikingDesktopFrame(VikingService vikingService) {
+    public VikingDesktopFrame(VikingService vikingService, VikingLambdaService lambdaService) {
         this.vikingService = vikingService;
+        this.lambdaService = lambdaService;
 
         setTitle("Viking Demo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,62 +38,22 @@ public class VikingDesktopFrame extends JFrame {
         JButton randomBtn = new JButton("Random viking");
         randomBtn.addActionListener(e -> onRandomViking());
 
-        JButton addSpecificButton = new JButton("Add viking");
-        addSpecificButton.addActionListener(event -> onCreateViking());
-
-        JButton deleteButton = new JButton("Delete selected");
-        deleteButton.addActionListener(event -> onDeleteViking(vikingTable));
-
-        JButton updateButton = new JButton("Update info");
-        updateButton.addActionListener(event -> onUpdateViking(vikingTable));
-
-        JButton deleteAllButton = new JButton("Delete all");
-        deleteAllButton.addActionListener(event -> {
-            vikingService.deleteAll();
+        JButton massButton = new JButton("Generation (10)");
+        massButton.addActionListener(e -> {
+            vikingService.generateAndSaveMassive(10);
             tableModel.refresh(vikingService.findAll());
         });
 
+        JButton statsButton = new JButton("Statistics");
+        statsButton.addActionListener(e -> showStatsDialog());
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(randomBtn);
-        bottomPanel.add(addSpecificButton);
-        bottomPanel.add(deleteButton);
-        bottomPanel.add(updateButton);
-        bottomPanel.add(deleteAllButton);
+        bottomPanel.add(massButton);
+        bottomPanel.add(statsButton);
         add(bottomPanel, BorderLayout.SOUTH);
+
         tableModel.refresh(vikingService.findAll());
-    }
-
-
-    private void onCreateViking() {
-        Viking template = new Viking(
-                null,
-                "New Viking",
-                25,
-                180,
-                HairColor.Blond,
-                BeardStyle.CLEAN_SHAVEN,
-                new java.util.ArrayList<>()
-        );
-
-        VikingEditDialog dialog = new VikingEditDialog(this, template);
-        dialog.setTitle("Create Viking");
-        dialog.setVisible(true);
-
-        if (dialog.isConfirmed()) {
-            Viking newViking = dialog.getUpdatedViking(null);
-
-            Viking saved = vikingService.save(newViking);
-            tableModel.addViking(saved);
-        }
-    }
-
-    private void onDeleteViking(JTable table) {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow != -1) {
-            Viking viking = tableModel.getVikingAt(selectedRow);
-            vikingService.deleteById(viking.id());
-            tableModel.refresh(vikingService.findAll());
-        }
     }
 
     private void onRandomViking() {
@@ -109,19 +65,87 @@ public class VikingDesktopFrame extends JFrame {
         tableModel.addViking(viking);
     }
 
-    private void onUpdateViking(JTable table) {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow != -1) {
-            Viking oldViking = tableModel.getVikingAt(selectedRow);
+    private void showStatsDialog() {
+        JDialog dialog = new JDialog(this, "Выбор статистики", true);
+        dialog.setSize(550, 350);
+        dialog.setLocationRelativeTo(this);
 
-            VikingEditDialog dialog = new VikingEditDialog(this, oldViking);
-            dialog.setVisible(true);
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-            if (dialog.isConfirmed()) {
-                Viking updatedViking = dialog.getUpdatedViking(oldViking.id());
-                vikingService.update(updatedViking);
-                tableModel.refresh(vikingService.findAll());
-            }
+        JPanel gridPanel = new JPanel(new GridLayout(6, 2, 15, 10));
+
+        ButtonGroup group = new ButtonGroup();
+        JRadioButton[] buttons = {
+                new JRadioButton("Возраст > 30"),
+                new JRadioButton("Возраст < 20"),
+                new JRadioButton("Возраст равен 33"),
+                new JRadioButton("Возраст в диапазоне от 20 до 35"),
+                new JRadioButton("Возраст вне диапазона от 33 до 46"),
+                new JRadioButton("Короткая борода + Блондин"),
+                new JRadioButton("С 1 или 2 топорами"),
+                new JRadioButton("Случайный выше 180 см"),
+                new JRadioButton("С легендарным вооружением"),
+                new JRadioButton("Рыжебородые (сорт. по возр.)"),
+                new JRadioButton("Максимальный ID в базе"),
+                new JRadioButton("Все четные ID")
+        };
+
+        for (JRadioButton rb : buttons) {
+            group.add(rb);
+            gridPanel.add(rb);
         }
+        buttons[0].setSelected(true);
+
+        JButton confirm = new JButton("Показать результат");
+        confirm.setPreferredSize(new Dimension(160, 30));
+        confirm.addActionListener(e -> {
+            int selectedIndex = -1;
+            for (int i = 0; i < buttons.length; i++) {
+                if (buttons[i].isSelected()) {
+                    selectedIndex = i;
+                    break;
+                }
+            }
+
+            String result = switch (selectedIndex) {
+                case 0 -> "Количество: " + lambdaService.countOlderThan(30);
+                case 1 -> "Количество: " + lambdaService.countYoungerThan(20);
+                case 2 -> "Количество: " + lambdaService.countEqualAge(33);
+                case 3 -> "Количество: " + lambdaService.countInAgeRange(20, 35);
+                case 4 -> "Количество: " + lambdaService.countOutsideAgeRange(33, 46);
+                case 5 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.SHORT, HairColor.Blond);
+                case 6 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
+                case 7 -> lambdaService.getRandomVikingTallerThan180()
+                        .map(v -> "Викинг: " + v.name() + " (" + v.heightCm() + " см)")
+                        .orElse("Не найден");
+                case 8 -> {
+                    List<Viking> list = lambdaService.getVikingsWithLegendaryEquipment();
+                    yield list.isEmpty() ? "Не найдены" : list.stream().map(Viking::name).collect(Collectors.joining(", "));
+                }
+                case 9 -> {
+                    List<Viking> list = lambdaService.getSortedRedBeardedVikings();
+                    yield list.isEmpty() ? "Не найдены" : list.stream().map(v -> v.name() + " (" + v.age() + ")").collect(Collectors.joining(", "));
+                }
+                case 10 -> "ID: " + lambdaService.findMaxId(lambdaService.getAllIdsFromDb());
+                case 11 -> {
+                    List<Integer> list = lambdaService.findAllEvenIds(lambdaService.getAllIdsFromDb());
+                    yield list.isEmpty() ? "Нет четных ID" : list.stream().map(String::valueOf).collect(Collectors.joining(", "));
+                }
+                default -> "Нет данных";
+            };
+
+            JOptionPane.showMessageDialog(dialog, "Результат: " + result);
+            dialog.dispose();
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        buttonPanel.add(confirm);
+
+        mainPanel.add(gridPanel, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.add(mainPanel);
+        dialog.setVisible(true);
     }
 }
