@@ -77,15 +77,15 @@ public class VikingDesktopFrame extends JFrame {
 
         ButtonGroup group = new ButtonGroup();
         JRadioButton[] buttons = {
-                new JRadioButton("Возраст > 30"),
-                new JRadioButton("Возраст > 20"),
-                new JRadioButton("Возраст < 20"),
+                new JRadioButton("Возраст более 30"),
+                new JRadioButton("Возраст более 20"),
+                new JRadioButton("Возраст менее 20"),
                 new JRadioButton("Возраст равен 33"),
                 new JRadioButton("Возраст в диапазоне от 20 до 35"),
                 new JRadioButton("Возраст в диапазоне от 20 до 40"),
-                new JRadioButton("Возраст вне диапазона от 33 до 46"),
+                new JRadioButton("Возраст вне диапазона от 30 до 45"),
                 new JRadioButton("Возраст вне диапазона от 20 до 40"),
-                new JRadioButton("Короткая борода + Блондин"),
+                new JRadioButton("Блондин с короткой бородой"),
                 new JRadioButton("Рыжие с длинной бородой"),
                 new JRadioButton("Имеют 1 топор"),
                 new JRadioButton("Имеют 2 топора"),
@@ -121,7 +121,7 @@ public class VikingDesktopFrame extends JFrame {
                 case 3 -> "Количество: " + lambdaService.countEqualAge(33);
                 case 4 -> "Количество: " + lambdaService.countInAgeRange(20, 35);
                 case 5 -> "Количество: " + lambdaService.countInAgeRange(20, 40);
-                case 6 -> "Количество: " + lambdaService.countOutsideAgeRange(33, 46);
+                case 6 -> "Количество: " + lambdaService.countOutsideAgeRange(30, 45);
                 case 7 -> "Количество: " + lambdaService.countOutsideAgeRange(20, 40);
                 case 8 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.SHORT, HairColor.Blond);
                 case 9 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.LONG, HairColor.Red);
