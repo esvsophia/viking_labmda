@@ -87,8 +87,6 @@ public class VikingDesktopFrame extends JFrame {
                 new JRadioButton("Возраст вне диапазона от 20 до 40"),
                 new JRadioButton("Блондин с короткой бородой"),
                 new JRadioButton("Рыжие с длинной бородой"),
-                new JRadioButton("Имеют 1 топор"),
-                new JRadioButton("Имеют 2 топора"),
                 new JRadioButton("С 1 или 2 топорами"),
                 new JRadioButton("Случайный выше 180 см"),
                 new JRadioButton("С легендарным вооружением"),
@@ -125,8 +123,6 @@ public class VikingDesktopFrame extends JFrame {
                 case 7 -> "Количество: " + lambdaService.countOutsideAgeRange(20, 40);
                 case 8 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.SHORT, HairColor.Blond);
                 case 9 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.LONG, HairColor.Red);
-                case 10 -> "Количество: " + lambdaService.countByAxeQuantity(1);
-                case 11 -> "Количество: " + lambdaService.countByAxeQuantity(2);
                 case 12 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
                 case 13 -> lambdaService.getRandomVikingTallerThan180()
                         .map(v -> "Викинг: " + v.name() + " (" + v.heightCm() + " см)")
