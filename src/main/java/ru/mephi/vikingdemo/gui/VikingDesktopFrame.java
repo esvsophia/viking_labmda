@@ -73,7 +73,7 @@ public class VikingDesktopFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        JPanel gridPanel = new JPanel(new GridLayout(9, 2, 15, 10));
+        JPanel gridPanel = new JPanel(new GridLayout(8, 2, 15, 10));
 
         ButtonGroup group = new ButtonGroup();
         JRadioButton[] buttons = {
@@ -123,20 +123,20 @@ public class VikingDesktopFrame extends JFrame {
                 case 7 -> "Количество: " + lambdaService.countOutsideAgeRange(20, 40);
                 case 8 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.SHORT, HairColor.Blond);
                 case 9 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.LONG, HairColor.Red);
-                case 12 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
-                case 13 -> lambdaService.getRandomVikingTallerThan180()
+                case 10 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
+                case 11 -> lambdaService.getRandomVikingTallerThan180()
                         .map(v -> "Викинг: " + v.name() + " (" + v.heightCm() + " см)")
                         .orElse("Не найден");
-                case 14 -> {
+                case 12 -> {
                     List<Viking> list = lambdaService.getVikingsWithLegendaryEquipment();
                     yield list.isEmpty() ? "Не найдены" : list.stream().map(Viking::name).collect(Collectors.joining(", "));
                 }
-                case 15 -> {
+                case 13 -> {
                     List<Viking> list = lambdaService.getSortedRedBeardedVikings();
                     yield list.isEmpty() ? "Не найдены" : list.stream().map(v -> v.name() + " (" + v.age() + ")").collect(Collectors.joining(", "));
                 }
-                case 16 -> "ID: " + lambdaService.findMaxId(lambdaService.getAllIdsFromDb());
-                case 17 -> {
+                case 14 -> "ID: " + lambdaService.findMaxId(lambdaService.getAllIdsFromDb());
+                case 15 -> {
                     List<Integer> list = lambdaService.findAllEvenIds(lambdaService.getAllIdsFromDb());
                     yield list.isEmpty() ? "Нет четных ID" : list.stream().map(String::valueOf).collect(Collectors.joining(", "));
                 }
