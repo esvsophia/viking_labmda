@@ -62,7 +62,7 @@ public class VikingLambdaService {
         return vikingStorage.findAll().stream()
                 .filter(v -> {
                     long axes = v.equipment().stream()
-                            .filter(e -> e.name().equalsIgnoreCase("Axe") 
+                            .filter(e -> e.name().equalsIgnoreCase("Axe"))
                             .count();
                     return axes == 1 || axes == 2;
                 })
