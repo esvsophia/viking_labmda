@@ -67,22 +67,28 @@ public class VikingDesktopFrame extends JFrame {
 
     private void showStatsDialog() {
         JDialog dialog = new JDialog(this, "Выбор статистики", true);
-        dialog.setSize(550, 350);
+        dialog.setSize(650, 480);
         dialog.setLocationRelativeTo(this);
 
         JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        JPanel gridPanel = new JPanel(new GridLayout(6, 2, 15, 10));
+        JPanel gridPanel = new JPanel(new GridLayout(9, 2, 15, 10));
 
         ButtonGroup group = new ButtonGroup();
         JRadioButton[] buttons = {
                 new JRadioButton("Возраст > 30"),
+                new JRadioButton("Возраст > 20"),
                 new JRadioButton("Возраст < 20"),
                 new JRadioButton("Возраст равен 33"),
                 new JRadioButton("Возраст в диапазоне от 20 до 35"),
+                new JRadioButton("Возраст в диапазоне от 20 до 40"),
                 new JRadioButton("Возраст вне диапазона от 33 до 46"),
+                new JRadioButton("Возраст вне диапазона от 20 до 40"),
                 new JRadioButton("Короткая борода + Блондин"),
+                new JRadioButton("Рыжие с длинной бородой"),
+                new JRadioButton("Имеют 1 топор"),
+                new JRadioButton("Имеют 2 топора"),
                 new JRadioButton("С 1 или 2 топорами"),
                 new JRadioButton("Случайный выше 180 см"),
                 new JRadioButton("С легендарным вооружением"),
@@ -110,25 +116,31 @@ public class VikingDesktopFrame extends JFrame {
 
             String result = switch (selectedIndex) {
                 case 0 -> "Количество: " + lambdaService.countOlderThan(30);
-                case 1 -> "Количество: " + lambdaService.countYoungerThan(20);
-                case 2 -> "Количество: " + lambdaService.countEqualAge(33);
-                case 3 -> "Количество: " + lambdaService.countInAgeRange(20, 35);
-                case 4 -> "Количество: " + lambdaService.countOutsideAgeRange(33, 46);
-                case 5 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.SHORT, HairColor.Blond);
-                case 6 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
-                case 7 -> lambdaService.getRandomVikingTallerThan180()
+                case 1 -> "Количество: " + lambdaService.countOlderThan(20);
+                case 2 -> "Количество: " + lambdaService.countYoungerThan(20);
+                case 3 -> "Количество: " + lambdaService.countEqualAge(33);
+                case 4 -> "Количество: " + lambdaService.countInAgeRange(20, 35);
+                case 5 -> "Количество: " + lambdaService.countInAgeRange(20, 40);
+                case 6 -> "Количество: " + lambdaService.countOutsideAgeRange(33, 46);
+                case 7 -> "Количество: " + lambdaService.countOutsideAgeRange(20, 40);
+                case 8 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.SHORT, HairColor.Blond);
+                case 9 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.LONG, HairColor.Red);
+                case 10 -> "Количество: " + lambdaService.countByAxeQuantity(1);
+                case 11 -> "Количество: " + lambdaService.countByAxeQuantity(2);
+                case 12 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
+                case 13 -> lambdaService.getRandomVikingTallerThan180()
                         .map(v -> "Викинг: " + v.name() + " (" + v.heightCm() + " см)")
                         .orElse("Не найден");
-                case 8 -> {
+                case 14 -> {
                     List<Viking> list = lambdaService.getVikingsWithLegendaryEquipment();
                     yield list.isEmpty() ? "Не найдены" : list.stream().map(Viking::name).collect(Collectors.joining(", "));
                 }
-                case 9 -> {
+                case 15 -> {
                     List<Viking> list = lambdaService.getSortedRedBeardedVikings();
                     yield list.isEmpty() ? "Не найдены" : list.stream().map(v -> v.name() + " (" + v.age() + ")").collect(Collectors.joining(", "));
                 }
-                case 10 -> "ID: " + lambdaService.findMaxId(lambdaService.getAllIdsFromDb());
-                case 11 -> {
+                case 16 -> "ID: " + lambdaService.findMaxId(lambdaService.getAllIdsFromDb());
+                case 17 -> {
                     List<Integer> list = lambdaService.findAllEvenIds(lambdaService.getAllIdsFromDb());
                     yield list.isEmpty() ? "Нет четных ID" : list.stream().map(String::valueOf).collect(Collectors.joining(", "));
                 }
