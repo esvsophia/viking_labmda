@@ -38,9 +38,9 @@ public class VikingDesktopFrame extends JFrame {
         JButton randomBtn = new JButton("Random viking");
         randomBtn.addActionListener(e -> onRandomViking());
 
-        JButton massButton = new JButton("Generation (10)");
+        JButton massButton = new JButton("Generation (15)");
         massButton.addActionListener(e -> {
-            vikingService.generateAndSaveMassive(10);
+            vikingService.generateAndSaveMassive(15);
             tableModel.refresh(vikingService.findAll());
         });
 
