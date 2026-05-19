@@ -58,19 +58,11 @@ public class VikingLambdaService {
                 .count();
     }
 
-    public long countByAxeQuantity(int quantity) {
-        return vikingStorage.findAll().stream()
-                .filter(v -> v.equipment().stream()
-                        .filter(e -> e.name().equalsIgnoreCase("Axe") || e.name().equalsIgnoreCase("Топор"))
-                        .count() == quantity)
-                .count();
-    }
-
     public long countWithOneOrTwoAxes() {
         return vikingStorage.findAll().stream()
                 .filter(v -> {
                     long axes = v.equipment().stream()
-                            .filter(e -> e.name().equalsIgnoreCase("Axe") || e.name().equalsIgnoreCase("Топор"))
+                            .filter(e -> e.name().equalsIgnoreCase("Axe") 
                             .count();
                     return axes == 1 || axes == 2;
                 })
