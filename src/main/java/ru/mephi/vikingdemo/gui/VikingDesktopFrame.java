@@ -135,9 +135,9 @@ public class VikingDesktopFrame extends JFrame {
                     List<Viking> list = lambdaService.getSortedRedBeardedVikings();
                     yield list.isEmpty() ? "Не найдены" : list.stream().map(v -> v.name() + " (" + v.age() + ")").collect(Collectors.joining(", "));
                 }
-                case 14 -> "ID: " + lambdaService.findMaxId(lambdaService.getAllIdsFromDb());
+                case 14 -> "ID: " + lambdaService.findMaxId();
                 case 15 -> {
-                    List<Integer> list = lambdaService.findAllEvenIds(lambdaService.getAllIdsFromDb());
+                    List<Integer> list = lambdaService.findAllEvenIds();
                     yield list.isEmpty() ? "Нет четных ID" : list.stream().map(String::valueOf).collect(Collectors.joining(", "));
                 }
                 default -> "Нет данных";
