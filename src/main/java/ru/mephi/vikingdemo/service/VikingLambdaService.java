@@ -6,9 +6,9 @@ import ru.mephi.vikingdemo.model.HairColor;
 import ru.mephi.vikingdemo.model.Viking;
 import ru.mephi.vikingdemo.repository.VikingStorage;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -96,27 +96,24 @@ public class VikingLambdaService {
 
     public List<Viking> getSortedRedBeardedVikings() {
         return vikingStorage.findAll().stream()
-                .filter(v -> v.hairColor() == HairColor.Red)
+                .filter(v -> v.hairColor() == HairColor.Red && v.beardStyle() != BeardStyle.CLEAN_SHAVEN)
                 .sorted(Comparator.comparingInt(Viking::age))
                 .toList();
     }
 
-    public Integer findMaxId(Integer[] ids) {
-        return Arrays.stream(ids)
+    public Integer findMaxId() {
+        return vikingStorage.findAll().stream()
+                .map(Viking::id)
+                .filter(Objects::nonNull)
                 .max(Comparator.naturalOrder())
                 .orElse(null);
     }
 
-    public List<Integer> findAllEvenIds(Integer[] ids) {
-        return Arrays.stream(ids)
-                .filter(id -> id % 2 == 0)
-                .toList();
-    }
-
-    public Integer[] getAllIdsFromDb() {
+    public List<Integer> findAllEvenIds() {
         return vikingStorage.findAll().stream()
                 .map(Viking::id)
-                .filter(java.util.Objects::nonNull)
-                .toArray(Integer[]::new);
+                .filter(Objects::nonNull)
+                .filter(id -> id % 2 == 0)
+                .toList();
     }
 }
