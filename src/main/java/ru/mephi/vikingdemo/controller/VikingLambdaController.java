@@ -8,6 +8,8 @@ import ru.mephi.vikingdemo.model.HairColor;
 import ru.mephi.vikingdemo.model.Viking;
 import ru.mephi.vikingdemo.service.VikingLambdaService;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,24 +81,24 @@ public class VikingLambdaController {
     @PostMapping("/array/max-id")
     @Operation(summary = "Найти максимальный ID из переданного массива")
     public Integer getMaxId(@RequestBody Integer[] ids) {
-        return lambdaService.findMaxId(ids);
+        return Arrays.stream(ids).max(Comparator.naturalOrder()).orElse(null);
     }
 
     @PostMapping("/array/even-ids")
     @Operation(summary = "Найти все четные ID из переданного массива")
     public List<Integer> getEvenIds(@RequestBody Integer[] ids) {
-        return lambdaService.findAllEvenIds(ids);
+        return Arrays.stream(ids).filter(id -> id % 2 == 0).toList();
     }
 
     @GetMapping("/db/max-id")
     @Operation(summary = "Найти максимальный ID среди текущих записей в БД")
     public Integer getMaxIdFromDb() {
-        return lambdaService.findMaxId(lambdaService.getAllIdsFromDb());
+        return lambdaService.findMaxId();
     }
 
     @GetMapping("/db/even-ids")
     @Operation(summary = "Найти все четные ID среди текущих записей в БД")
     public List<Integer> getEvenIdsFromDb() {
-        return lambdaService.findAllEvenIds(lambdaService.getAllIdsFromDb());
+        return lambdaService.findAllEvenIds();
     }
 }
