@@ -39,9 +39,9 @@ public class VikingDesktopFrame extends JFrame {
         JButton randomBtn = new JButton("Random viking");
         randomBtn.addActionListener(e -> onRandomViking());
 
-        JButton massButton = new JButton("Generation (15)");
+        JButton massButton = new JButton("Generation (10)");
         massButton.addActionListener(e -> {
-            vikingService.generateAndSaveMassive(15);
+            vikingService.generateAndSaveMassive(10);
             tableModel.refresh(vikingService.findAll());
         });
 
@@ -74,20 +74,22 @@ public class VikingDesktopFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        JPanel gridPanel = new JPanel(new GridLayout(8, 2, 15, 10));
+        JPanel gridPanel = new JPanel(new GridLayout(9, 2, 15, 10));
 
         ButtonGroup group = new ButtonGroup();
         JRadioButton[] buttons = {
-                new JRadioButton("Возраст более 30"),
-                new JRadioButton("Возраст более 20"),
-                new JRadioButton("Возраст менее 20"),
+                new JRadioButton("Возраст > 30"),
+                new JRadioButton("Возраст > 20"),
+                new JRadioButton("Возраст < 20"),
                 new JRadioButton("Возраст равен 33"),
                 new JRadioButton("Возраст в диапазоне от 20 до 35"),
                 new JRadioButton("Возраст в диапазоне от 20 до 40"),
-                new JRadioButton("Возраст вне диапазона от 30 до 45"),
+                new JRadioButton("Возраст вне диапазона от 33 до 46"),
                 new JRadioButton("Возраст вне диапазона от 20 до 40"),
-                new JRadioButton("Блондин с короткой бородой"),
+                new JRadioButton("Короткая борода + Блондин"),
                 new JRadioButton("Рыжие с длинной бородой"),
+                new JRadioButton("Имеют 1 топор"),
+                new JRadioButton("Имеют 2 топора"),
                 new JRadioButton("С 1 или 2 топорами"),
                 new JRadioButton("Случайный выше 180 см"),
                 new JRadioButton("С легендарным вооружением"),
@@ -113,6 +115,8 @@ public class VikingDesktopFrame extends JFrame {
                 }
             }
 
+            Integer[] arrayIds = lambdaService.getArrayOfIdsFromStorage();
+
             String result = switch (selectedIndex) {
                 case 0 -> "Количество: " + lambdaService.countOlderThan(30);
                 case 1 -> "Количество: " + lambdaService.countOlderThan(20);
@@ -120,26 +124,28 @@ public class VikingDesktopFrame extends JFrame {
                 case 3 -> "Количество: " + lambdaService.countEqualAge(33);
                 case 4 -> "Количество: " + lambdaService.countInAgeRange(20, 35);
                 case 5 -> "Количество: " + lambdaService.countInAgeRange(20, 40);
-                case 6 -> "Количество: " + lambdaService.countOutsideAgeRange(30, 45);
+                case 6 -> "Количество: " + lambdaService.countOutsideAgeRange(33, 46);
                 case 7 -> "Количество: " + lambdaService.countOutsideAgeRange(20, 40);
                 case 8 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.SHORT, HairColor.Blond);
                 case 9 -> "Количество: " + lambdaService.countByBeardAndHair(BeardStyle.LONG, HairColor.Red);
-                case 10 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
-                case 11 -> lambdaService.getRandomVikingTallerThan180()
+                case 10 -> "Количество: " + lambdaService.countByAxeQuantity(1);
+                case 11 -> "Количество: " + lambdaService.countByAxeQuantity(2);
+                case 12 -> "Количество: " + lambdaService.countWithOneOrTwoAxes();
+                case 13 -> lambdaService.getRandomVikingTallerThan180()
                         .map(v -> "Викинг: " + v.name() + " (" + v.heightCm() + " см)")
                         .orElse("Не найден");
-                case 12 -> {
+                case 14 -> {
                     List<Viking> list = lambdaService.getVikingsWithLegendaryEquipment();
                     yield list.isEmpty() ? "Не найдены" : list.stream().map(Viking::name).collect(Collectors.joining(", "));
                 }
-                case 13 -> {
+                case 15 -> {
                     List<Viking> list = lambdaService.getSortedRedBeardedVikings();
                     yield list.isEmpty() ? "Не найдены" : list.stream().map(v -> v.name() + " (" + v.age() + ")").collect(Collectors.joining(", "));
                 }
-                case 14 -> "ID: " + lambdaService.findMaxId();
-                case 15 -> {
-                    Integer[] arr = lambdaService.findAllEvenIds();
-                    yield arr.length == 0 ? "Нет четных ID" : Arrays.stream(arr).map(String::valueOf).collect(Collectors.joining(", "));
+                case 16 -> "ID: " + lambdaService.findMaxId(arrayIds);
+                case 17 -> {
+                    Integer[] evenIdsArray = lambdaService.findAllEvenIds(arrayIds);
+                    yield evenIdsArray.length == 0 ? "Нет четных ID" : Arrays.stream(evenIdsArray).map(String::valueOf).collect(Collectors.joining(", "));
                 }
                 default -> "Нет данных";
             };
