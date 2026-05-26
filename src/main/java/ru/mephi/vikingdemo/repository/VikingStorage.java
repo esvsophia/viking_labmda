@@ -44,19 +44,19 @@ public class VikingStorage {
                 viking.hairColor(), viking.beardStyle(), viking.equipment());
     }
 
-    public List<Viking> findAll() {
-        List<VikingEntity> vikingEntities = vikingRepository.findAll();
+    public Viking[] findAll() {
+        VikingEntity[] vikingEntities = vikingRepository.findAll();
         List<EquipmentItemEntity> equipmentEntities = equipmentItemRepository.findAll();
 
         Map<Integer, List<EquipmentItemEntity>> equipmentByVikingId = equipmentEntities.stream()
                 .collect(Collectors.groupingBy(EquipmentItemEntity::vikingId));
 
-        return vikingEntities.stream()
+        return Arrays.stream(vikingEntities)
                 .map(vikingEntity -> vikingMapper.toViking(
                         vikingEntity,
                         equipmentByVikingId.getOrDefault(vikingEntity.id(), List.of())
                 ))
-                .toList();
+                .toArray(Viking[]::new);
     }
 
     @Transactional
