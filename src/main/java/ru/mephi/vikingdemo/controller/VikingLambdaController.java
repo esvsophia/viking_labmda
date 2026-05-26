@@ -10,7 +10,6 @@ import ru.mephi.vikingdemo.service.VikingLambdaService;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -68,13 +67,13 @@ public class VikingLambdaController {
 
     @GetMapping("/legendary")
     @Operation(summary = "Все викинги с легендарным снаряжением")
-    public List<Viking> getLegendary() {
+    public Viking[] getLegendary() {
         return lambdaService.getVikingsWithLegendaryEquipment();
     }
 
     @GetMapping("/sorted-red-bearded")
     @Operation(summary = "Сортированный по возрасту список рыжебородых викингов")
-    public List<Viking> getSortedRedBearded() {
+    public Viking[] getSortedRedBearded() {
         return lambdaService.getSortedRedBeardedVikings();
     }
 

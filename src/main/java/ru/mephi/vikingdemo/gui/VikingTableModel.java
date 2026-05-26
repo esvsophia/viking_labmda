@@ -4,18 +4,18 @@ import ru.mephi.vikingdemo.model.EquipmentItem;
 import ru.mephi.vikingdemo.model.Viking;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class VikingTableModel extends AbstractTableModel {
 
-    private final List<Viking> data = new ArrayList<>();
+    private Viking[] data = new Viking[0];
     private final String[] columns = {"ID", "Name", "Age", "Height (cm)", "Hair color", "Beard style", "Equipment"};
 
     @Override
     public int getRowCount() {
-        return data.size();
+        return data.length;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class VikingTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Viking viking = data.get(rowIndex);
+        Viking viking = data[rowIndex];
         return switch (columnIndex) {
             case 0 -> viking.id();
             case 1 -> viking.name();
@@ -39,12 +39,11 @@ public class VikingTableModel extends AbstractTableModel {
     }
 
     public Viking getVikingAt(int row) {
-        return data.get(row);
+        return data[row];
     }
 
-    public void refresh(List<Viking> newItems) {
-        data.clear();
-        data.addAll(newItems);
+    public void refresh(Viking[] newItems) {
+        data = Arrays.copyOf(newItems, newItems.length);
         fireTableDataChanged();
     }
 
@@ -58,8 +57,9 @@ public class VikingTableModel extends AbstractTableModel {
     }
 
     public void addViking(Viking viking) {
-        int row = data.size();
-        data.add(viking);
+        int row = data.length;
+        data = Arrays.copyOf(data, data.length + 1);
+        data[row] = viking;
         fireTableRowsInserted(row, row);
     }
 }

@@ -35,14 +35,14 @@ public class EquipmentItemRepository {
         return jdbcTemplate.query(sql, equipmentRowMapper, vikingId);
     }
 
-    public List<EquipmentItemEntity> findAll() {
+    public EquipmentItemEntity[] findAll() {
         String sql = """
                 select id, viking_id, name, quality
                 from equipment_items
                 order by viking_id, id
                 """;
 
-        return jdbcTemplate.query(sql, equipmentRowMapper);
+        return jdbcTemplate.query(sql, equipmentRowMapper).toArray(EquipmentItemEntity[]::new);
     }
 
     public void save(EquipmentItemEntity item) {

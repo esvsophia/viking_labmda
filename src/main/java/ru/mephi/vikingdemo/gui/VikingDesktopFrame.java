@@ -9,7 +9,6 @@ import ru.mephi.vikingdemo.service.VikingService;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class VikingDesktopFrame extends JFrame {
@@ -39,9 +38,9 @@ public class VikingDesktopFrame extends JFrame {
         JButton randomBtn = new JButton("Random viking");
         randomBtn.addActionListener(e -> onRandomViking());
 
-        JButton massButton = new JButton("Generation (10)");
+        JButton massButton = new JButton("Generation (15)");
         massButton.addActionListener(e -> {
-            vikingService.generateAndSaveMassive(10);
+            vikingService.generateAndSaveMassive(15);
             tableModel.refresh(vikingService.findAll());
         });
 
@@ -115,8 +114,6 @@ public class VikingDesktopFrame extends JFrame {
                 }
             }
 
-            Integer[] arrayIds = lambdaService.getArrayOfIdsFromStorage();
-
             String result = switch (selectedIndex) {
                 case 0 -> "Количество: " + lambdaService.countOlderThan(30);
                 case 1 -> "Количество: " + lambdaService.countOlderThan(20);
@@ -135,16 +132,16 @@ public class VikingDesktopFrame extends JFrame {
                         .map(v -> "Викинг: " + v.name() + " (" + v.heightCm() + " см)")
                         .orElse("Не найден");
                 case 14 -> {
-                    List<Viking> list = lambdaService.getVikingsWithLegendaryEquipment();
-                    yield list.isEmpty() ? "Не найдены" : list.stream().map(Viking::name).collect(Collectors.joining(", "));
+                    Viking[] arr = lambdaService.getVikingsWithLegendaryEquipment();
+                    yield arr.length == 0 ? "Не найдены" : Arrays.stream(arr).map(Viking::name).collect(Collectors.joining(", "));
                 }
                 case 15 -> {
-                    List<Viking> list = lambdaService.getSortedRedBeardedVikings();
-                    yield list.isEmpty() ? "Не найдены" : list.stream().map(v -> v.name() + " (" + v.age() + ")").collect(Collectors.joining(", "));
+                    Viking[] arr = lambdaService.getSortedRedBeardedVikings();
+                    yield arr.length == 0 ? "Не найдены" : Arrays.stream(arr).map(v -> v.name() + " (" + v.age() + ")").collect(Collectors.joining(", "));
                 }
-                case 16 -> "ID: " + lambdaService.findMaxId(arrayIds);
+                case 16 -> "ID: " + lambdaService.findMaxId();
                 case 17 -> {
-                    Integer[] evenIdsArray = lambdaService.findAllEvenIds(arrayIds);
+                    Integer[] evenIdsArray = lambdaService.findAllEvenIds();
                     yield evenIdsArray.length == 0 ? "Нет четных ID" : Arrays.stream(evenIdsArray).map(String::valueOf).collect(Collectors.joining(", "));
                 }
                 default -> "Нет данных";

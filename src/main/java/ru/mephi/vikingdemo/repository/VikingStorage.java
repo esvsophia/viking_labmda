@@ -1,5 +1,6 @@
 package ru.mephi.vikingdemo.repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,19 +43,24 @@ public class VikingStorage {
         return viking;
     }
 
-    public List<Viking> findAll() {
-        List<VikingEntity> vikingEntities = vikingRepository.findAll();
-        List<EquipmentItemEntity> equipmentEntities = equipmentItemRepository.findAll();
+    public Viking[] findAll() {
+        VikingEntity[] vikingEntities = vikingRepository.findAll();
+        EquipmentItemEntity[] equipmentEntities = equipmentItemRepository.findAll();
 
-        Map<Integer, List<EquipmentItemEntity>> equipmentByVikingId = equipmentEntities.stream()
+        Map<Integer, List<EquipmentItemEntity>> equipmentByVikingId = Arrays.stream(equipmentEntities)
                 .collect(Collectors.groupingBy(EquipmentItemEntity::vikingId));
 
-        return vikingEntities.stream()
+        return Arrays.stream(vikingEntities)
                 .map(vikingEntity -> vikingMapper.toViking(
                         vikingEntity,
                         equipmentByVikingId.getOrDefault(vikingEntity.id(), List.of())
                 ))
-                .toList();
+                .toArray(Viking[]::new);
+    }
+
+    @Transactional
+    public void update(Viking viking) {
+        vikingRepository.update(vikingMapper.toVikingEntity(viking));
     }
 
     @Transactional
@@ -62,8 +68,13 @@ public class VikingStorage {
         vikingRepository.deleteById(id);
     }
 
-    public Integer[] getAllIdsAsArray() {
-        return vikingRepository.findAll().stream()
+    @Transactional
+    public void deleteAll() {
+        vikingRepository.deleteAll();
+    }
+
+    public Integer[] getAllID() {
+        return Arrays.stream(vikingRepository.findAll())
                 .map(VikingEntity::id)
                 .filter(java.util.Objects::nonNull)
                 .toArray(Integer[]::new);

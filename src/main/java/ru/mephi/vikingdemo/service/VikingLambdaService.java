@@ -8,7 +8,6 @@ import ru.mephi.vikingdemo.repository.VikingStorage;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -23,54 +22,54 @@ public class VikingLambdaService {
     }
 
     public long countOlderThan(int age) {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.age() > age)
                 .count();
     }
 
     public long countYoungerThan(int age) {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.age() < age)
                 .count();
     }
 
     public long countEqualAge(int age) {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.age() == age)
                 .count();
     }
 
     public long countInAgeRange(int minAge, int maxAge) {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.age() >= minAge && v.age() <= maxAge)
                 .count();
     }
 
     public long countOutsideAgeRange(int minAge, int maxAge) {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.age() < minAge || v.age() > maxAge)
                 .count();
     }
 
     public long countByBeardAndHair(BeardStyle beardStyle, HairColor hairColor) {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.beardStyle() != null && v.beardStyle() == beardStyle && v.hairColor() == hairColor)
                 .count();
     }
 
     public long countByAxeQuantity(int quantity) {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.equipment().stream()
-                        .filter(e -> e.name().equalsIgnoreCase("Axe") || e.name().equalsIgnoreCase("Топор"))
+                        .filter(e -> e.name().equalsIgnoreCase("Axe"))
                         .count() == quantity)
                 .count();
     }
 
     public long countWithOneOrTwoAxes() {
-        return vikingStorage.findAll().stream()
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> {
                     long axes = v.equipment().stream()
-                            .filter(e -> e.name().equalsIgnoreCase("Axe") || e.name().equalsIgnoreCase("Топор"))
+                            .filter(e -> e.name().equalsIgnoreCase("Axe"))
                             .count();
                     return axes == 1 || axes == 2;
                 })
@@ -78,41 +77,37 @@ public class VikingLambdaService {
     }
 
     public Optional<Viking> getRandomVikingTallerThan180() {
-        List<Viking> tallVikings = vikingStorage.findAll().stream()
+        Viking[] tallVikings = Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.heightCm() > 180)
-                .toList();
-        if (tallVikings.isEmpty()) {
+                .toArray(Viking[]::new);
+        if (tallVikings.length == 0) {
             return Optional.empty();
         }
-        return Optional.of(tallVikings.get(random.nextInt(tallVikings.size())));
+        return Optional.of(tallVikings[random.nextInt(tallVikings.length)]);
     }
 
-    public List<Viking> getVikingsWithLegendaryEquipment() {
-        return vikingStorage.findAll().stream()
+    public Viking[] getVikingsWithLegendaryEquipment() {
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.equipment().stream()
                         .anyMatch(e -> e.quality().equalsIgnoreCase("Legendary")))
-                .toList();
+                .toArray(Viking[]::new);
     }
 
-    public List<Viking> getSortedRedBeardedVikings() {
-        return vikingStorage.findAll().stream()
+    public Viking[] getSortedRedBeardedVikings() {
+        return Arrays.stream(vikingStorage.findAll())
                 .filter(v -> v.hairColor() == HairColor.Red)
                 .sorted(Comparator.comparingInt(Viking::age))
-                .toList();
+                .toArray(Viking[]::new);
     }
 
-    public Integer[] getArrayOfIdsFromStorage() {
-        return vikingStorage.getAllIdsAsArray();
-    }
-
-    public Integer findMaxId(Integer[] ids) {
-        return Arrays.stream(ids)
+    public Integer findMaxId() {
+        return Arrays.stream(vikingStorage.getAllID())
                 .max(Comparator.naturalOrder())
                 .orElse(null);
     }
 
-    public Integer[] findAllEvenIds(Integer[] ids) {
-        return Arrays.stream(ids)
+    public Integer[] findAllEvenIds() {
+        return Arrays.stream(vikingStorage.getAllID())
                 .filter(id -> id % 2 == 0)
                 .toArray(Integer[]::new);
     }

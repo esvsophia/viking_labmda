@@ -63,7 +63,7 @@ public class VikingController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Список успешно получен")
     })
-    public List<Viking> getAllVikings() {
+    public Viking[] getAllVikings() {
         return vikingService.findAll();
     }
 

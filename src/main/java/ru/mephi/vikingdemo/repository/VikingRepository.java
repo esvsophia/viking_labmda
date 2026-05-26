@@ -40,7 +40,7 @@ public class VikingRepository {
             from vikings
             order by id
             """;
-    
+
         return jdbcTemplate.query(sql, vikingRowMapper).toArray(VikingEntity[]::new);
     }
 
