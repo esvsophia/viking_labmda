@@ -10,7 +10,6 @@ import ru.mephi.vikingdemo.model.EquipmentItemEntity;
 import ru.mephi.vikingdemo.model.Viking;
 import ru.mephi.vikingdemo.model.VikingEntity;
 
-
 @Repository
 public class VikingStorage {
 
@@ -40,36 +39,22 @@ public class VikingStorage {
             );
         }
 
-        return new Viking(vikingId, viking.name(), viking.age(), viking.heightCm(),
-                viking.hairColor(), viking.beardStyle(), viking.equipment());
+        return viking;
     }
 
-    public Viking[] findAll() {
-        VikingEntity[] vikingEntities = vikingRepository.findAll();
+    public List<Viking> findAll() {
+        List<VikingEntity> vikingEntities = vikingRepository.findAll();
         List<EquipmentItemEntity> equipmentEntities = equipmentItemRepository.findAll();
 
         Map<Integer, List<EquipmentItemEntity>> equipmentByVikingId = equipmentEntities.stream()
                 .collect(Collectors.groupingBy(EquipmentItemEntity::vikingId));
 
-        return Arrays.stream(vikingEntities)
+        return vikingEntities.stream()
                 .map(vikingEntity -> vikingMapper.toViking(
                         vikingEntity,
                         equipmentByVikingId.getOrDefault(vikingEntity.id(), List.of())
                 ))
-                .toArray(Viking[]::new);
-    }
-
-    @Transactional
-    public void update(Viking viking) {
-        vikingRepository.update(vikingMapper.toVikingEntity(viking));
-
-        equipmentItemRepository.deleteByVikingId(viking.id());
-
-        for (EquipmentItem item : viking.equipment()) {
-            equipmentItemRepository.save(
-                    vikingMapper.toEquipmentItemEntity(viking.id(), item)
-            );
-        }
+                .toList();
     }
 
     @Transactional
@@ -77,8 +62,10 @@ public class VikingStorage {
         vikingRepository.deleteById(id);
     }
 
-    @Transactional
-    public void deleteAll() {
-        vikingRepository.deleteAll();
+    public Integer[] getAllIdsAsArray() {
+        return vikingRepository.findAll().stream()
+                .map(VikingEntity::id)
+                .filter(java.util.Objects::nonNull)
+                .toArray(Integer[]::new);
     }
 }
