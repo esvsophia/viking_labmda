@@ -6,9 +6,9 @@ import ru.mephi.vikingdemo.model.HairColor;
 import ru.mephi.vikingdemo.model.Viking;
 import ru.mephi.vikingdemo.repository.VikingStorage;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -54,14 +54,14 @@ public class VikingLambdaService {
 
     public long countByBeardAndHair(BeardStyle beardStyle, HairColor hairColor) {
         return vikingStorage.findAll().stream()
-                .filter(v -> v.beardStyle() == beardStyle && v.hairColor() == hairColor)
+                .filter(v -> v.beardStyle() != null && v.beardStyle() == beardStyle && v.hairColor() == hairColor)
                 .count();
     }
 
     public long countByAxeQuantity(int quantity) {
         return vikingStorage.findAll().stream()
                 .filter(v -> v.equipment().stream()
-                        .filter(e -> e.name().equalsIgnoreCase("Axe"))
+                        .filter(e -> e.name().equalsIgnoreCase("Axe") || e.name().equalsIgnoreCase("Топор"))
                         .count() == quantity)
                 .count();
     }
@@ -70,7 +70,7 @@ public class VikingLambdaService {
         return vikingStorage.findAll().stream()
                 .filter(v -> {
                     long axes = v.equipment().stream()
-                            .filter(e -> e.name().equalsIgnoreCase("Axe"))
+                            .filter(e -> e.name().equalsIgnoreCase("Axe") || e.name().equalsIgnoreCase("Топор"))
                             .count();
                     return axes == 1 || axes == 2;
                 })
@@ -96,23 +96,23 @@ public class VikingLambdaService {
 
     public List<Viking> getSortedRedBeardedVikings() {
         return vikingStorage.findAll().stream()
-                .filter(v -> v.hairColor() == HairColor.Red && v.beardStyle() != BeardStyle.CLEAN_SHAVEN)
+                .filter(v -> v.hairColor() == HairColor.Red)
                 .sorted(Comparator.comparingInt(Viking::age))
                 .toList();
     }
 
-    public Integer findMaxId() {
-        return vikingStorage.findAll().stream()
-                .map(Viking::id)
-                .filter(Objects::nonNull)
+    public Integer[] getArrayOfIdsFromStorage() {
+        return vikingStorage.getAllIdsAsArray();
+    }
+
+    public Integer findMaxId(Integer[] ids) {
+        return Arrays.stream(ids)
                 .max(Comparator.naturalOrder())
                 .orElse(null);
     }
 
-    public Integer[] findAllEvenIds() {
-        return vikingStorage.findAll().stream()
-                .map(Viking::id)
-                .filter(Objects::nonNull)
+    public Integer[] findAllEvenIds(Integer[] ids) {
+        return Arrays.stream(ids)
                 .filter(id -> id % 2 == 0)
                 .toArray(Integer[]::new);
     }
