@@ -21,7 +21,7 @@ public class VikingService {
         this.vikingStorage = vikingStorage;
     }
 
-    public List<Viking> findAll() {
+    public Viking[] findAll() {
         return vikingStorage.findAll();
     }
 
