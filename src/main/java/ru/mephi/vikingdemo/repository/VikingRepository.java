@@ -34,14 +34,14 @@ public class VikingRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<VikingEntity> findAll() {
+    public VikingEntity[] findAll() {
         String sql = """
             select id, name, age, height_cm, hair_color, beard_style, description
             from vikings
             order by id
             """;
-
-        return jdbcTemplate.query(sql, vikingRowMapper);
+    
+        return jdbcTemplate.query(sql, vikingRowMapper).toArray(VikingEntity[]::new);
     }
 
     public Optional<VikingEntity> findById(int id) {
