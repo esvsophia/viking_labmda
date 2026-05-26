@@ -86,8 +86,8 @@ public class VikingLambdaController {
 
     @PostMapping("/array/even-ids")
     @Operation(summary = "Найти все четные ID из переданного массива")
-    public List<Integer> getEvenIds(@RequestBody Integer[] ids) {
-        return Arrays.stream(ids).filter(id -> id % 2 == 0).toList();
+    public Integer[] getEvenIds(@RequestBody Integer[] ids) {
+        return Arrays.stream(ids).filter(id -> id % 2 == 0).toArray(Integer[]::new);
     }
 
     @GetMapping("/db/max-id")
@@ -98,7 +98,7 @@ public class VikingLambdaController {
 
     @GetMapping("/db/even-ids")
     @Operation(summary = "Найти все четные ID среди текущих записей в БД")
-    public List<Integer> getEvenIdsFromDb() {
+    public Integer[] getEvenIdsFromDb() {
         return lambdaService.findAllEvenIds();
     }
 }

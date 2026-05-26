@@ -8,6 +8,7 @@ import ru.mephi.vikingdemo.service.VikingService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,8 +138,8 @@ public class VikingDesktopFrame extends JFrame {
                 }
                 case 14 -> "ID: " + lambdaService.findMaxId();
                 case 15 -> {
-                    List<Integer> list = lambdaService.findAllEvenIds();
-                    yield list.isEmpty() ? "Нет четных ID" : list.stream().map(String::valueOf).collect(Collectors.joining(", "));
+                    Integer[] arr = lambdaService.findAllEvenIds();
+                    yield arr.length == 0 ? "Нет четных ID" : Arrays.stream(arr).map(String::valueOf).collect(Collectors.joining(", "));
                 }
                 default -> "Нет данных";
             };

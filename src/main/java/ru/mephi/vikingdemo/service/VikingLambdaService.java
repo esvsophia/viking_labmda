@@ -109,11 +109,11 @@ public class VikingLambdaService {
                 .orElse(null);
     }
 
-    public List<Integer> findAllEvenIds() {
+    public Integer[] findAllEvenIds() {
         return vikingStorage.findAll().stream()
                 .map(Viking::id)
                 .filter(Objects::nonNull)
                 .filter(id -> id % 2 == 0)
-                .toList();
+                .toArray(Integer[]::new);
     }
 }
